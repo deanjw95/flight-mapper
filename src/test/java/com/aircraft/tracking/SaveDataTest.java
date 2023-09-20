@@ -1,6 +1,6 @@
 package com.aircraft.tracking;
 
-import com.aircraft.tracking.dto.Airlines;
+import com.aircraft.tracking.entity.Airline;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +16,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
@@ -36,18 +35,19 @@ public class SaveDataTest {
                 .build();
 
         // response를 List<Airlines>로 받아야 함
-        HttpResponse<JsonNode> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofJson());
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+
 
         ObjectMapper objectMapper = new ObjectMapper();
-        List<Airlines> airlines = objectMapper.readValue(response.body(), new TypeReference<List<Airlines>>() {
+        List<Airline> airlines = objectMapper.readValue(response.body(), new TypeReference<List<Airline>>() {
         });
 
         // save all
         airlinesRepository.saveAll(airlines);
         // save가 잘 됐는지 확인
-        List<Airlines> all = airlinesRepository.findAll();
+        List<Airline> all = airlinesRepository.findAll();
         Assertions.assertThat(all.size()).isEqualTo(airlines.size());
 
     }
-
 }
