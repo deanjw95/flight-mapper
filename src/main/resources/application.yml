@@ -1,12 +1,15 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/flight-manager
+    url: jdbc:h2:file:./db/H2/flight-manager;AUTO_SERVER=true
+#    url: jdbc:h2:tcp://localhost/~/flight-manager
     username: sa
     password:
     driver-class-name: org.h2.Driver
     jpa:
       hibernate:
-        ddl-auto: create
+        database: H2
+        dialect: org.hibernate.dialect.H2Dialect
+        ddl-auto: none
       properties:
         hibernate:
           format_sql: true
