@@ -2,6 +2,7 @@ package com.aircraft.tracking.entity;
 
 
 import com.aircraft.tracking.dto.AirlineRequest;
+import com.aircraft.tracking.dto.AirportRequest;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,7 +35,7 @@ public class Airport {
     @Column(name = "country_code")
     private String countryCode;
 
-    public Airport(AirlineRequest.AirlineResponse response) {
+    public Airport(AirportRequest.AirportResponse response) {
         this.iataCode = response.getIataCode();
         this.name = response.getName();
         this.icaoCode = response.getIcaoCode();
