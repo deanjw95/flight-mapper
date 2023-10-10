@@ -1,13 +1,7 @@
 package com.aircraft.tracking;
 
-import com.aircraft.tracking.dto.AirlineRequest;
-import com.aircraft.tracking.dto.AirportRequest;
-import com.aircraft.tracking.dto.CityRequest;
-import com.aircraft.tracking.dto.RouteRequest;
-import com.aircraft.tracking.entity.Airline;
-import com.aircraft.tracking.entity.Airport;
-import com.aircraft.tracking.entity.City;
-import com.aircraft.tracking.entity.Route;
+import com.aircraft.tracking.dto.*;
+import com.aircraft.tracking.entity.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -37,6 +31,10 @@ public class SaveDataTest {
     CityRepository cityRepository;
     @Autowired
     RouteRepository routeRepository;
+    @Autowired
+    CountryRepository countryRepository;
+    @Autowired
+    FleetRepository fleetRepository;
 
     @Test
     public void saveAirports() throws IOException, InterruptedException {
@@ -103,6 +101,40 @@ public class SaveDataTest {
                 .collect(Collectors.toList());
 
         cityRepository.saveAll(cityList);
+    }
+
+    @Test
+    public void saveCountries() throws IOException, InterruptedException {
+        HttpResponse<String> response = HttpClient.newHttpClient()
+                .send(HttpRequest.newBuilder()
+                        .uri(URI.create("https://airlabs.co/api/v9/countries.json?&api_key=9a4c5309-9dae-4240-81f7-2a2b4b1e475b"))
+                        .method("GET", HttpRequest.BodyPublishers.noBody())
+                        .build(), HttpResponse.BodyHandlers.ofString());
+
+        CountryRequest countryRequest = new ObjectMapper().readValue(response.body(), CountryRequest.class);
+
+        List<Country> countryList = countryRequest.getResponse().stream()
+                .map(Country::new)
+                .collect(Collectors.toList());
+
+        countryRepository.saveAll(countryList);
+    }
+
+    @Test
+    public void saveFleets() throws IOException, InterruptedException {
+        HttpResponse<String> response = HttpClient.newHttpClient()
+                .send(HttpRequest.newBuilder()
+                        .uri(URI.create("https://airlabs.co/api/v9/fleets.json?airline_icao=KAL&api_key=9a4c5309-9dae-4240-81f7-2a2b4b1e475b"))
+                        .method("GET", HttpRequest.BodyPublishers.noBody())
+                        .build(), HttpResponse.BodyHandlers.ofString());
+
+        FleetRequest fleetRequest = new ObjectMapper().readValue(response.body(), FleetRequest.class);
+
+        List<Fleet> fleetList = fleetRequest.getResponse().stream()
+                .map(Fleet::new)
+                .collect(Collectors.toList());
+
+        fleetRepository.saveAll(fleetList);
     }
 
     @Test
